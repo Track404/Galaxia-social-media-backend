@@ -1,14 +1,73 @@
 const prisma = require('../prisma/client');
 
-async function createLike(authorId, postId = null, commentId = null) {
-  const like = await prisma.like.create({
-    data: {
-      authorId: authorId,
-      postId: postId,
-      commentId: commentId,
-    },
-  });
-  return like;
+async function createLikePost(authorId, postId) {
+  try {
+    // Validate authorId and postId
+    if (!authorId || !postId) {
+      throw new Error('authorId and postId are required');
+    }
+
+    // Check if the author exists
+    const author = await prisma.user.findUnique({ where: { id: authorId } });
+    if (!author) {
+      throw new Error('User (author) not found');
+    }
+
+    // Check if the post exists
+    const post = await prisma.post.findUnique({ where: { id: postId } });
+    if (!post) {
+      throw new Error('Post not found');
+    }
+
+    // Create like
+    const like = await prisma.like.create({
+      data: {
+        authorId,
+        postId,
+      },
+    });
+
+    return like;
+  } catch (error) {
+    console.error('Error creating like on post:', error.message);
+    throw new Error(error.message);
+  }
+}
+
+async function createLikeComment(authorId, commentId) {
+  try {
+    // Validate authorId and commentId
+    if (!authorId || !commentId) {
+      throw new Error('authorId and commentId are required');
+    }
+
+    // Check if the author exists
+    const author = await prisma.user.findUnique({ where: { id: authorId } });
+    if (!author) {
+      throw new Error('User (author) not found');
+    }
+
+    // Check if the comment exists
+    const comment = await prisma.comment.findUnique({
+      where: { id: commentId },
+    });
+    if (!comment) {
+      throw new Error('Comment not found');
+    }
+
+    // Create like
+    const like = await prisma.like.create({
+      data: {
+        authorId,
+        commentId,
+      },
+    });
+
+    return like;
+  } catch (error) {
+    console.error('Error creating like on comment:', error.message);
+    throw new Error(error.message);
+  }
 }
 
 async function createdLikes(likes) {
@@ -64,7 +123,8 @@ async function deleteAllLikes() {
 }
 
 module.exports = {
-  createLike,
+  createLikePost,
+  createLikeComment,
   createdLikes,
   getLikeById,
   getAllLikes,

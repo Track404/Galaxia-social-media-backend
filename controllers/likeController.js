@@ -1,12 +1,19 @@
 const likeModel = require('../models/likeModel');
 
-async function createLike(req, res) {
-  const like = await likeModel.createLike(
+async function createLikePost(req, res) {
+  const like = await likeModel.createLikePost(
     Number(req.params.authorId),
-    Number(req.params.postId),
+    Number(req.params.postId)
+  );
+  res.json({ like: like, message: 'Like Created on Post' });
+}
+
+async function createLikeComment(req, res) {
+  const like = await likeModel.createLikeComment(
+    Number(req.params.authorId),
     Number(req.params.commentId)
   );
-  res.json({ like: like, message: 'Like Created' });
+  res.json({ like: like, message: 'Like Created on Comment' });
 }
 async function createdLikes(req, res) {
   const LikesData = req.body.Likes;
@@ -57,7 +64,8 @@ async function deleteAllLikes(req, res) {
 }
 
 module.exports = {
-  createLike,
+  createLikePost,
+  createLikeComment,
   createdLikes,
   getUniqueLikeById,
   getAllLikes,
