@@ -51,7 +51,7 @@ async function deleteUser(req, res) {
 }
 
 async function deleteAllUsers(req, res) {
-  const user = await userModel.deleteAllUsers(Number(req.params.id));
+  const user = await userModel.deleteAllUsers();
   res.json({
     user: user,
     message: `${user.count} users deleted successfully`,
