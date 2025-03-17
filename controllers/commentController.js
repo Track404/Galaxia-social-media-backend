@@ -4,7 +4,7 @@ async function createComment(req, res) {
   const { content } = req.body;
   const comment = await commentModel.createComment(
     content,
-    Number(req.params.commentId),
+    Number(req.params.postId),
     Number(req.params.authorId)
   );
   res.json({ comment: comment, message: 'Comment Created' });
@@ -36,8 +36,7 @@ async function getAllComments(req, res) {
 
 async function updateComment(req, res) {
   const { title, content } = req.body;
-  const comment = await commentModel.updatecomment(
-    title,
+  const comment = await commentModel.updateComment(
     content,
     Number(req.params.commentId)
   );

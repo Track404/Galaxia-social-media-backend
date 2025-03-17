@@ -1,7 +1,7 @@
 const prisma = require('../prisma/client');
 
 async function createComment(content, postId, authorId) {
-  const comment = await prisma.post.create({
+  const comment = await prisma.comment.create({
     data: {
       content: content,
       postId: postId,
@@ -37,7 +37,7 @@ async function getAllComments() {
 }
 
 async function updateComment(content, commentId) {
-  const post = await prisma.post.update({
+  const post = await prisma.comment.update({
     where: {
       id: commentId,
     },
