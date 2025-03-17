@@ -15,7 +15,7 @@ async function createdPosts(req, res) {
 
   res.json({
     posts: createdPosts,
-    message: `${createdPosts.length} Users Created Successfully`,
+    message: `${createdPosts.length} Posts Created Successfully`,
   });
 }
 
@@ -48,8 +48,8 @@ async function updatePost(req, res) {
 }
 
 async function deletePost(req, res) {
-  const post = await postModel.deletePost(Number(req.params.id));
-  res.json({ post: post, message: `Delete Post ${req.params.id}` });
+  const post = await postModel.deletePost(Number(req.params.postId));
+  res.json({ post: post, message: `Delete Post ${req.params.postId}` });
 }
 
 async function deleteAllUserPosts(req, res) {
