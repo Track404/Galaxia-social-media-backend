@@ -1,10 +1,10 @@
 const prisma = require('../prisma/client');
 
-async function createFollow(firstUserId, secondUserId) {
+async function createFollow(followerId, followingId) {
   const follow = await prisma.follow.create({
     data: {
-      followerId: firstUserId,
-      followingId: secondUserId,
+      followerId: followerId,
+      followingId: followingId,
     },
   });
   return follow;
