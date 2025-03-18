@@ -9,6 +9,7 @@ const userRoute = require('./routes/userRoute');
 const postRoute = require('./routes/postRoute');
 const commentRoute = require('./routes/commentRoute');
 const likeRoute = require('./routes/likeRoute');
+const followRoute = require('./routes/followRoute');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
@@ -19,6 +20,7 @@ app.use('/', userRoute);
 app.use('/', postRoute);
 app.use('/', commentRoute);
 app.use('/', likeRoute);
+app.use('/', followRoute);
 
 const PORT = process.env.PORT || 3000;
 
