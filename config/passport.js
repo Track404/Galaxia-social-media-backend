@@ -13,22 +13,17 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        // Log the profile to check the structure
-        console.log(profile);
-
         // Attempt to retrieve the public email from profile.emails
         let email = null;
 
         if (profile.emails && profile.emails.length > 0) {
-          email = profile.emails[0].value; // Use the first email in the list
+          email = profile.emails[0].value;
         }
 
         // If no public email, fallback to the GitHub "no-reply" email
         if (!email) {
-          email = profile._json.email; // This will contain the "no-reply" email
+          email = profile._json.email;
         }
-
-        // If still no email available, throw an error
         if (!email) {
           return done(
             new Error('GitHub profile does not contain an email address')
@@ -40,11 +35,10 @@ passport.use(
         if (!user) {
           // Create new user if not exists
           user = await userModel.createUser(
-            profile.displayName || profile.username, // Use GitHub username as fallback for name
+            profile.displayName || profile.username,
             email,
             '',
-            profile.photos[0]?.value || '' // Handle missing profile image
-            // No password for OAuth users
+            profile.photos[0]?.value || ''
           );
         }
 
@@ -65,7 +59,7 @@ passport.use(
   )
 );
 
-// Serialize user (not needed for JWT but required by Passport)
+// Serialize user
 passport.serializeUser((user, done) => {
   done(null, user);
 });
