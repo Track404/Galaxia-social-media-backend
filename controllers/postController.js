@@ -36,7 +36,10 @@ async function getAllPosts(req, res) {
   const posts = await postModel.getAllPosts();
   res.json({ posts: posts, message: `All Posts` });
 }
-
+async function getRandomPosts(req, res) {
+  const posts = await postModel.getRandomPosts();
+  res.json({ posts: posts, message: `All Posts` });
+}
 async function updatePost(req, res) {
   const { title, content } = req.body;
   const post = await postModel.updatePost(

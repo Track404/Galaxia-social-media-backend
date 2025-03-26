@@ -24,6 +24,14 @@ async function getUserById(id) {
     where: {
       id: id,
     },
+    include: {
+      _count: {
+        select: {
+          followers: true,
+          following: true,
+        },
+      },
+    },
   });
   return user;
 }
@@ -44,6 +52,33 @@ async function getAllUsers() {
     },
   });
   return user;
+}
+
+async function getUsersOnSearchQuery(search, page) {
+  const pageSize = 10;
+  const users = await prisma.user.findMany({
+    where: {
+      name: {
+        contains: search,
+        mode: 'insensitive',
+      },
+    },
+    take: pageSize,
+    skip: (page - 1) * pageSize,
+    orderBy: { createdAt: 'desc' },
+  });
+  return users;
+}
+async function getRandomUsers() {
+  const count = await prisma.user.count();
+  const randomSkip = Math.max(0, Math.floor(Math.random() * (count - 3)));
+
+  const users = await prisma.user.findMany({
+    take: 3,
+    skip: randomSkip, // Skip a random number of rows
+  });
+
+  return users;
 }
 
 async function updateUser(id, name, email) {
@@ -79,6 +114,8 @@ module.exports = {
   getUserById,
   getUserByEmail,
   getAllUsers,
+  getRandomUsers,
+  getUsersOnSearchQuery,
   updateUser,
   deleteUser,
   deleteAllUsers,

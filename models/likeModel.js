@@ -86,6 +86,30 @@ async function getLikeById(likeId) {
   return like;
 }
 
+async function getCheckIsLikePost(authorId, postId) {
+  const like = await prisma.like.findFirst({
+    where: { authorId, postId },
+    select: { id: true },
+  });
+
+  return {
+    isLiked: !!like,
+    likeId: like ? like.id : null,
+  };
+}
+
+async function getCheckIsLikeComment(authorId, commentId) {
+  const like = await prisma.like.findFirst({
+    where: { authorId, commentId },
+    select: { id: true },
+  });
+
+  return {
+    isLiked: !!like,
+    likeId: like ? like.id : null,
+  };
+}
+
 async function getAllLikes() {
   const likes = await prisma.like.findMany({
     orderBy: {
@@ -126,6 +150,8 @@ module.exports = {
   createLikePost,
   createLikeComment,
   createdLikes,
+  getCheckIsLikePost,
+  getCheckIsLikeComment,
   getLikeById,
   getAllLikes,
   updateLike,

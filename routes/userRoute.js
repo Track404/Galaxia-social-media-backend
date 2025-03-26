@@ -5,7 +5,9 @@ const inputValidation = require('../validators/inputValidation');
 const pageValidation = require('../validators/pageValidation');
 const validateRequest = require('../validators/validateRequest');
 userRouter.get('/user', userController.getAllUsers);
+userRouter.get('/user/random', userController.getRandomUsers);
 userRouter.get('/user/:id', userController.getUniqueUserById);
+userRouter.get('/users/search', userController.getUsersOnSearch);
 userRouter.post(
   '/user',
   inputValidation.validateRegister,

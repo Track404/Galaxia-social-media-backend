@@ -4,8 +4,19 @@ const likeController = require('../controllers/likeController');
 
 likeRouter.get('/like', likeController.getAllLikes);
 likeRouter.get('/like/:likeId', likeController.getUniqueLikeById);
-likeRouter.post('/like/:commentId/:authorId', likeController.createLikeComment);
-likeRouter.post('/like/:postId/:authorId', likeController.createLikePost);
+likeRouter.get(
+  '/like/post/:postId/:authorId',
+  likeController.getCheckIsLikePost
+);
+likeRouter.get(
+  '/like/post/:commentId/:authorId',
+  likeController.getCheckIsLikeComment
+);
+likeRouter.post(
+  '/like/comment/:commentId/:authorId',
+  likeController.createLikeComment
+);
+likeRouter.post('/like/post/:postId/:authorId', likeController.createLikePost);
 
 likeRouter.post('/likes', likeController.createdLikes);
 likeRouter.put('/like/:likeId', likeController.updateLike); //not in use

@@ -26,6 +26,17 @@ async function getFollowById(followId) {
   return follow;
 }
 
+async function getFollowPairs(followerId, followingId) {
+  const follow = await prisma.follow.findFirst({
+    where: {
+      followerId,
+      followingId,
+    },
+  });
+
+  return !!follow;
+}
+
 async function getAllFollows() {
   const follows = await prisma.follow.findMany({
     orderBy: {
@@ -54,6 +65,7 @@ module.exports = {
   createFollows,
   getFollowById,
   getAllFollows,
+  getFollowPairs,
   deleteFollow,
   deleteAllFollows,
 };

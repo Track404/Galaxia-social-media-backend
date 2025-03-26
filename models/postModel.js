@@ -23,6 +23,29 @@ async function getPostById(postId) {
     where: {
       id: postId,
     },
+    include: {
+      author: {
+        select: {
+          id: true,
+          name: true,
+          imageUrl: true,
+        },
+      },
+      _count: {
+        select: { Likes: true, Comments: true },
+      },
+      Comments: {
+        include: {
+          author: true,
+          _count: {
+            select: { Likes: true },
+          },
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      },
+    },
   });
   return post;
 }
@@ -32,18 +55,64 @@ async function getPostsByAuthorId(authorId) {
     where: {
       authorId: authorId,
     },
-  });
-  return posts;
-}
-
-async function getAllPosts() {
-  const posts = await prisma.post.findMany({
+    take: 10,
+    include: {
+      author: {
+        select: {
+          id: true,
+          name: true,
+          imageUrl: true,
+        },
+      },
+      _count: {
+        select: {
+          Likes: true,
+          Comments: true,
+        },
+      },
+    },
     orderBy: {
       createdAt: 'desc',
     },
   });
   return posts;
 }
+
+async function getAllPosts() {
+  const posts = await prisma.post.findMany({
+    take: 10,
+    distinct: ['authorId'],
+    include: {
+      author: {
+        select: {
+          id: true,
+          name: true,
+          imageUrl: true,
+        },
+      },
+      _count: {
+        select: {
+          Likes: true,
+          Comments: true,
+        },
+      },
+    },
+
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+  return posts;
+}
+
+const getRandomPosts = async () => {
+  const posts = await prisma.post.findMany({
+    take: 3,
+    orderBy: { random: {} },
+  });
+
+  return posts;
+};
 
 async function updatePost(title, content, postId) {
   const user = await prisma.post.update({
@@ -87,6 +156,7 @@ module.exports = {
   getPostById,
   getPostsByAuthorId,
   getAllPosts,
+  getRandomPosts,
   updatePost,
   deletePost,
   deleteAllUserPosts,

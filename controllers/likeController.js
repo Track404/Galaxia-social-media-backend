@@ -33,6 +33,31 @@ async function getUniqueLikeById(req, res) {
   });
 }
 
+async function getCheckIsLikePost(req, res) {
+  const like = await likeModel.getCheckIsLikePost(
+    Number(req.params.authorId),
+    Number(req.params.postId)
+  );
+  res.json({
+    like: like,
+    message: `Get like on post${req.params.postId}`,
+  });
+}
+async function getAllLikes(req, res) {
+  const likes = await likeModel.getAllLikes();
+  res.json({ likes: likes, message: `All Likes` });
+}
+
+async function getCheckIsLikeComment(req, res) {
+  const like = await likeModel.getCheckIsLikeComment(
+    Number(req.params.authorId),
+    Number(req.params.commentId)
+  );
+  res.json({
+    like: like,
+    message: `Get like on comment${req.params.commentId}`,
+  });
+}
 async function getAllLikes(req, res) {
   const likes = await likeModel.getAllLikes();
   res.json({ likes: likes, message: `All Likes` });
@@ -42,16 +67,16 @@ async function updateLike(req, res) {
   const like = await likeModel.updateLike(
     Number(req.params.postId),
     Number(req.params.commentId),
-    Number(req.params.LikeId)
+    Number(req.params.likeId)
   );
   res.json({ like: like, message: ` like ${req.params.likeId} Updated` });
 }
 
 async function deleteLike(req, res) {
-  const like = await likeModel.deleteLike(Number(req.params.LikeId));
+  const like = await likeModel.deleteLike(Number(req.params.likeId));
   res.json({
     like: like,
-    message: `Delete like ${req.params.LikeId}`,
+    message: `Delete like ${req.params.likeId}`,
   });
 }
 
@@ -68,6 +93,8 @@ module.exports = {
   createLikeComment,
   createdLikes,
   getUniqueLikeById,
+  getCheckIsLikePost,
+  getCheckIsLikeComment,
   getAllLikes,
   updateLike,
   deleteLike,

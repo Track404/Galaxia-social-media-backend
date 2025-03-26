@@ -39,6 +39,17 @@ async function getAllUsers(req, res) {
   res.json({ user: user, message: `All Users` });
 }
 
+async function getRandomUsers(req, res) {
+  const user = await userModel.getRandomUsers();
+  res.json({ user: user, message: `Random Users` });
+}
+
+async function getUsersOnSearch(req, res) {
+  const { search = '', page = 1 } = req.query;
+  const users = await userModel.getUsersOnSearchQuery(search, page);
+
+  res.json({ users: users, message: `Search Users` });
+}
 async function updateUser(req, res) {
   const { name, email } = req.body;
   const user = await userModel.updateUser(Number(req.params.id), name, email);
@@ -63,6 +74,8 @@ module.exports = {
   createUsers,
   getUniqueUserById,
   getAllUsers,
+  getUsersOnSearch,
+  getRandomUsers,
   updateUser,
   deleteUser,
   deleteAllUsers,

@@ -28,7 +28,7 @@ async function loginUser(req, res) {
 
     res.cookie('token', token, {
       httpOnly: true,
-      secure: true,
+      //secure: true,
       sameSite: 'Strict',
       maxAge: 2 * 60 * 60 * 1000,
     });
@@ -47,13 +47,12 @@ async function githubCallback(req, res) {
 
   // Store JWT in an HTTP-only cookie
   res.cookie('token', req.user.token, {
-    httpOnly: true,
-    secure: true,
+    //httpOnly: true,
+    //secure:true
     sameSite: 'strict',
     maxAge: 2 * 60 * 60 * 1000,
   });
-
-  res.json({ message: 'Login successful' });
+  res.redirect(`http://localhost:5173/home`);
 }
 
 // Secure User: Middleware to protect routes

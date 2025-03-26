@@ -8,6 +8,10 @@ followRouter.post(
   '/follow/:followerId/:followingId',
   followController.createFollow
 );
+followRouter.get(
+  '/follow/:followerId/:followingId',
+  followController.getFollowPairs
+);
 followRouter.post('/follows', followController.createdFollows);
 followRouter.delete('/follow/:followId', followController.deleteFollow);
 followRouter.delete('/follows', followController.deleteAllFollows);

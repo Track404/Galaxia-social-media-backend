@@ -3,6 +3,7 @@ const postRouter = Router();
 const postController = require('../controllers/postController');
 
 postRouter.get('/post', postController.getAllPosts);
+//postRouter.get('/post/random', postController.getRandomPosts);
 postRouter.get('/post/:postId', postController.getUniquePostById);
 postRouter.post('/post/:authorId', postController.createPost);
 postRouter.post('/posts', postController.createdPosts);

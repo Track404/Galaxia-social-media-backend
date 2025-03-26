@@ -16,7 +16,13 @@ async function createdFollows(req, res) {
     message: `${createdfollows.length} follows Created Successfully`,
   });
 }
-
+async function getFollowPairs(req, res) {
+  const follow = await followModel.getFollowPairs(
+    Number(req.params.followerId),
+    Number(req.params.followingId)
+  );
+  res.json({ follow: follow, message: 'Follow status' });
+}
 async function getUniqueFollowById(req, res) {
   const follow = await followModel.getFollowById(Number(req.params.followId));
   res.json({
@@ -51,6 +57,7 @@ module.exports = {
   createdFollows,
   getUniqueFollowById,
   getAllFollows,
+  getFollowPairs,
   deleteFollow,
   deleteAllFollows,
 };
