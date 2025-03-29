@@ -1,14 +1,34 @@
 const postModel = require('../models/postModel');
-
+const cloudinary = require('../config/cloudinary');
 async function createPost(req, res) {
-  const { title, content } = req.body;
-  const post = await postModel.createPost(
-    title,
-    content,
-    Number(req.params.authorId)
-  );
-  res.json({ post: post, message: 'Post Created' });
+  const { title, content, image } = req.body;
+
+  let uploadResponse;
+
+  try {
+    if (image) {
+      uploadResponse = await cloudinary.uploader.upload(image, {
+        folder: 'galaxiaPostImages',
+      });
+      console.log(uploadResponse);
+    }
+
+    const post = await postModel.createPost(
+      title,
+      content,
+      Number(req.params.authorId),
+      uploadResponse ? uploadResponse.public_id : null
+    );
+
+    res.json({ post: post, message: 'Post Created' });
+  } catch (error) {
+    console.error('Error creating post:', error);
+    res
+      .status(500)
+      .json({ message: 'Internal Server Error', error: error.message });
+  }
 }
+
 async function createdPosts(req, res) {
   const postsData = req.body.posts;
   const createdPosts = await postModel.createPosts(postsData);
@@ -77,6 +97,7 @@ module.exports = {
   getUniquePostById,
   getPostsByAuthorId,
   getAllPosts,
+  getRandomPosts,
   updatePost,
   deletePost,
   deleteAllUserPosts,

@@ -1,11 +1,12 @@
 const prisma = require('../prisma/client');
 
-async function createPost(title, content, authorId) {
+async function createPost(title, content, authorId, publicId) {
   const post = await prisma.post.create({
     data: {
       title: title,
       content: content,
       authorId: authorId,
+      imagePublicId: publicId,
     },
   });
   return post;
