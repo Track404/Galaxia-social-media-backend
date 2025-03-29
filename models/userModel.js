@@ -81,7 +81,7 @@ async function getRandomUsers() {
   return users;
 }
 
-async function updateUser(id, name, email) {
+async function updateUser(id, name, email, imageUrl) {
   const user = await prisma.user.update({
     where: {
       id: id,
@@ -89,6 +89,7 @@ async function updateUser(id, name, email) {
     data: {
       name: name,
       email: email,
+      imageUrl: imageUrl,
     },
   });
   return user;

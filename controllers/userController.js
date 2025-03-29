@@ -1,10 +1,24 @@
 const userModel = require('../models/userModel');
 const bcrypt = require('bcryptjs');
+const cloudinary = require('../config/cloudinary');
 
 async function createUser(req, res) {
-  const { name, email, password } = req.body;
+  const { name, email, password, image } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
-  const user = await userModel.createUser(name, email, hashedPassword);
+  let uploadResponse;
+  if (image) {
+    uploadResponse = await cloudinary.uploader.upload(image, {
+      folder: 'galaxiaProfileImage',
+    });
+
+    console.log(uploadResponse);
+  }
+  const user = await userModel.createUser(
+    name,
+    email,
+    hashedPassword,
+    uploadResponse ? uploadResponse.secure_url : null
+  );
   res.json({ user: user, message: 'User Created' });
 }
 async function createUsers(req, res) {
@@ -51,8 +65,21 @@ async function getUsersOnSearch(req, res) {
   res.json({ users: users, message: `Search Users` });
 }
 async function updateUser(req, res) {
-  const { name, email } = req.body;
-  const user = await userModel.updateUser(Number(req.params.id), name, email);
+  const { name, email, image, imageUrl } = req.body;
+  let uploadResponse;
+  if (image) {
+    uploadResponse = await cloudinary.uploader.upload(image, {
+      folder: 'galaxiaProfileImage',
+    });
+
+    console.log(uploadResponse);
+  }
+  const user = await userModel.updateUser(
+    Number(req.params.id),
+    name,
+    email,
+    uploadResponse ? uploadResponse.secure_url : imageUrl
+  );
   res.json({ user: user, message: 'User Updated' });
 }
 
