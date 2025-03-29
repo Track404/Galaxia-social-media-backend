@@ -52,7 +52,7 @@ async function githubCallback(req, res) {
     sameSite: 'none',
     maxAge: 2 * 60 * 60 * 1000,
   });
-  res.redirect(`http://localhost:5173/home`);
+  res.redirect(`https://galaxiasocial.netlify.app/home`);
 }
 
 // Secure User: Middleware to protect routes
