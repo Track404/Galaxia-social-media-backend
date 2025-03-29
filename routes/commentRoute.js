@@ -1,7 +1,8 @@
 const { Router } = require('express');
 const commentRouter = Router();
 const commentController = require('../controllers/commentController');
-
+const pageValidation = require('../validators/pageValidation');
+const validateRequest = require('../validators/validateRequest');
 commentRouter.get('/comment', commentController.getAllComments);
 commentRouter.get(
   '/comment/:commentId',
@@ -9,6 +10,8 @@ commentRouter.get(
 );
 commentRouter.post(
   '/comment/:postId/:authorId',
+  pageValidation.validNewComment,
+  validateRequest,
   commentController.createComment
 );
 commentRouter.post('/comments', commentController.createdComments);
