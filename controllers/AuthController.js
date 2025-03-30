@@ -57,10 +57,12 @@ async function githubCallback(req, res) {
   const token = req.user.token;
 
   if (isSafari(userAgent)) {
-    // For Safari, send the token to be stored in localStorage
-    return res.json({ message: 'Login successful', token });
+    // Redirect to frontend with the token in the URL for Safari
+    return res.redirect(
+      `https://galaxiasocial.netlify.app/home?token=${token}`
+    );
   } else {
-    // For other browsers, store the JWT in an HTTP-only cookie
+    // Store JWT in an HTTP-only cookie for other browsers
     res.cookie('token', token, {
       httpOnly: true,
       secure: true,
@@ -69,8 +71,8 @@ async function githubCallback(req, res) {
       maxAge: 2 * 60 * 60 * 1000,
     });
 
-    // No need to redirect in backend, only handle frontend redirection
-    return res.json({ message: 'Login successful' });
+    // Redirect to home page
+    return res.redirect(`https://galaxiasocial.netlify.app/home`);
   }
 }
 
