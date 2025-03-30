@@ -4,9 +4,15 @@ const userModel = require('../models/userModel');
 const tokenBlacklist = new Set();
 require('dotenv').config();
 
-// Login function: Validates credentials and stores JWT in cookie
+// Utility function to detect Safari browser (backend)
+function isSafari(userAgent) {
+  return userAgent.includes('Safari') && !userAgent.includes('Chrome');
+}
+
+// Login Function: Handles user login
 async function loginUser(req, res) {
   const { email, password } = req.body;
+  const userAgent = req.headers['user-agent'];
 
   try {
     const user = await userModel.getUserByEmail(email);
@@ -16,25 +22,26 @@ async function loginUser(req, res) {
     }
 
     const token = jwt.sign(
-      {
-        id: user.id,
-        email: user.email,
-      },
+      { id: user.id, email: user.email },
       process.env.JWT_SECRET,
-      {
-        expiresIn: '2h',
-      }
+      { expiresIn: '2h' }
     );
 
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'None',
-      path: '/',
-      maxAge: 2 * 60 * 60 * 1000,
-    });
+    if (isSafari(userAgent)) {
+      // Send token in response for frontend to store in localStorage
+      return res.json({ message: 'Login successful', token });
+    } else {
+      // Set HTTP-only cookie for other browsers
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'None',
+        path: '/',
+        maxAge: 2 * 60 * 60 * 1000,
+      });
 
-    res.json({ message: 'Login successful' });
+      return res.json({ message: 'Login successful' });
+    }
   } catch (err) {
     res.status(500).json({ message: 'Error logging in', error: err });
   }
@@ -46,21 +53,33 @@ async function githubCallback(req, res) {
     return res.status(401).json({ message: 'OAuth authentication failed' });
   }
 
-  // Store JWT in an HTTP-only cookie
-  res.cookie('token', req.user.token, {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'None',
-    path: '/',
-    maxAge: 2 * 60 * 60 * 1000,
-  });
-  res.redirect(`https://galaxiasocial.netlify.app/home`);
+  const token = req.user.token;
+  const userAgent = req.headers['user-agent'];
+
+  if (isSafari(userAgent)) {
+    return res.json({ message: 'Login successful', token });
+  } else {
+    res.cookie('token', token, {
+      httpOnly: true,
+      //secure: true,
+      sameSite: 'None',
+      path: '/',
+      maxAge: 2 * 60 * 60 * 1000,
+    });
+
+    res.redirect(`https://galaxiasocial.netlify.app/home`);
+  }
 }
 
 // Secure User: Middleware to protect routes
 async function secureUser(req, res) {
   try {
-    const token = req.cookies.token;
+    let token = req.cookies.token;
+
+    if (!token && req.headers.authorization) {
+      token = req.headers.authorization.split(' ')[1];
+    }
+
     if (!token) {
       return res.status(401).json({ message: 'Not authenticated' });
     }
@@ -72,8 +91,8 @@ async function secureUser(req, res) {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
     const user = await userModel.getUserById(decoded.id);
+
     if (!user) {
       return res.status(401).json({ message: 'User not found' });
     }
@@ -89,7 +108,12 @@ async function secureUser(req, res) {
 
 // Logout function: Invalidates the token and clears the cookie
 async function logoutUser(req, res) {
-  const token = req.cookies.token;
+  const userAgent = req.headers['user-agent'];
+  let token = req.cookies.token;
+
+  if (isSafari(userAgent)) {
+    token = req.headers.authorization?.split(' ')[1];
+  }
 
   if (!token) {
     return res.status(400).json({ message: 'No token provided' });
@@ -97,11 +121,14 @@ async function logoutUser(req, res) {
 
   tokenBlacklist.add(token);
 
-  res.clearCookie('token', {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'None',
-  });
+  if (!isSafari(userAgent)) {
+    res.clearCookie('token', {
+      httpOnly: true,
+      //secure: true,
+      sameSite: 'None',
+      path: '/',
+    });
+  }
 
   res.json({ message: 'Logged out successfully' });
 }
