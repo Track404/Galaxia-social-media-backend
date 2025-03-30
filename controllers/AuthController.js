@@ -69,8 +69,8 @@ async function githubCallback(req, res) {
       maxAge: 2 * 60 * 60 * 1000,
     });
 
-    // Redirect to the frontend home page after successful login
-    return res.redirect(`https://galaxiasocial.netlify.app/home`);
+    // No need to redirect in backend, only handle frontend redirection
+    return res.json({ message: 'Login successful' });
   }
 }
 
