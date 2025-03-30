@@ -53,22 +53,15 @@ async function githubCallback(req, res) {
     return res.status(401).json({ message: 'OAuth authentication failed' });
   }
 
-  const token = req.user.token;
-  const userAgent = req.headers['user-agent'];
-
-  if (isSafari(userAgent)) {
-    return res.json({ message: 'Login successful', token });
-  } else {
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'None',
-      path: '/',
-      maxAge: 2 * 60 * 60 * 1000,
-    });
-
-    res.redirect(`https://galaxiasocial.netlify.app/home`);
-  }
+  // Store JWT in an HTTP-only cookie
+  res.cookie('token', req.user.token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'None',
+    path: '/',
+    maxAge: 2 * 60 * 60 * 1000,
+  });
+  res.redirect(`https://galaxiasocial.netlify.app/home`);
 }
 
 // Secure User: Middleware to protect routes
