@@ -30,6 +30,7 @@ async function loginUser(req, res) {
       httpOnly: true,
       secure: true,
       sameSite: 'None',
+      path: '/',
       maxAge: 2 * 60 * 60 * 1000,
     });
 
@@ -49,7 +50,8 @@ async function githubCallback(req, res) {
   res.cookie('token', req.user.token, {
     httpOnly: true,
     secure: true,
-    sameSite: 'none',
+    sameSite: 'None',
+    path: '/',
     maxAge: 2 * 60 * 60 * 1000,
   });
   res.redirect(`https://galaxiasocial.netlify.app/home`);
