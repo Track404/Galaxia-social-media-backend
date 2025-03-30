@@ -29,7 +29,7 @@ async function loginUser(req, res) {
     res.cookie('token', token, {
       httpOnly: true,
       secure: true,
-      sameSite: 'None',
+      sameSite: 'Lax',
       path: '/',
       maxAge: 2 * 60 * 60 * 1000,
     });
@@ -50,7 +50,7 @@ async function githubCallback(req, res) {
   res.cookie('token', req.user.token, {
     httpOnly: true,
     secure: true,
-    sameSite: 'None',
+    sameSite: 'Lax',
     path: '/',
     maxAge: 2 * 60 * 60 * 1000,
   });
